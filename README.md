@@ -13,7 +13,7 @@
 
 <!-- 个人资料徽标 -->
 <div align="center">
-  <a href="https://www.markyin.cn"><img src="https://img.shields.io/badge/website-%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99-blue"></a>&emsp;
+  <a href=""><img src="https://img.shields.io/badge/website-%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99-blue"></a>&emsp;
   <a href="https://twitter.com/eglfiv/"><img src="https://img.shields.io/badge/twitter-%E6%8E%A8%E7%89%B9-blue"></a>&emsp;
   <a href="https://www.facebook.com/eglfiv"><img src="https://img.shields.io/badge/facebook-%E8%84%B8%E4%B9%A6-003472"></a>&emsp;
   <a href="https://www.youtube.com/channel/UCj8xQYsoVkT9ccZ0wETpGkg"><img src="https://img.shields.io/badge/youtube-%E6%B2%B9%E7%AE%A1-c32136"></a>&emsp;
@@ -31,7 +31,7 @@
 </div>
 
 #  🙋 Hello
-<p>✍️&nbsp;&nbsp;Hello everyone, I'm Mark🧑‍💻, studying in Qilu University of Technology. I love computer science and Internet, and I want to become a senior programmer! My personal website is <a href="www.markyin.cn">www.markyin.cn</a> , welcome to discuss and learn. We're making the world a better place. Through constructing elegant hierarchies for maximum code reuse and extensibility.</p>
+<p>✍️&nbsp;&nbsp;Hello everyone, I'm Mark🧑‍💻, studying in Qilu University of Technology. I love computer science and Internet, and I want to become a senior programmer! We're making the world a better place. Through constructing elegant hierarchies for maximum code reuse and extensibility.</p>
 </p>
 
 <!-- 比较好的自己的开源项目卡片 -->
