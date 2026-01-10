@@ -193,19 +193,17 @@ Sunday                   4 commits           █░░░░░░░░░░�
 🕑︎ Time Zone: Asia/Shanghai
 
 💬 Programming Languages: 
-C++                      29 mins             ██████████████░░░░░░░░░░░   57.03 % 
-MATLAB                   21 mins             ██████████░░░░░░░░░░░░░░░   41.50 % 
-Other                    0 secs              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.47 % 
+No Activity Tracked This Week
 
 🔥 Editors: 
-VS Code                  51 mins             █████████████████████████   100.00 % 
+No Activity Tracked This Week
 
 💻 Operating System: 
-Windows                  51 mins             █████████████████████████   100.00 % 
+No Activity Tracked This Week
 ```
 
 
- Last Updated on 07/01/2026 00:28:24 UTC
+ Last Updated on 10/01/2026 00:28:40 UTC
 <!--END_SECTION:waka-->
 
 </td>
