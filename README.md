@@ -31,7 +31,7 @@
 </div>
 
 #  🙋 Hello
-<p>✍️&nbsp;&nbsp;Hello everyone, I'm Mark🧑‍💻, studying in Qilu University of Technology. I love computer science and Internet, and I want to become a senior programmer! We're making the world a better place. Through constructing elegant hierarchies for maximum code reuse and extensibility.</p>
+<p>✍️&nbsp;&nbsp;Hello everyone, I'm EGL🧑‍💻 I love computer science and Internet, and I want to become a senior programmer! We're making the world a better place. Through constructing elegant hierarchies for maximum code reuse and extensibility.</p>
 </p>
 
 <!-- 比较好的自己的开源项目卡片 -->
