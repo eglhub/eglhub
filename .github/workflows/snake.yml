@@ -1,0 +1,67 @@
+# GitHub Action for generating a contribution graph with a snake eating your contributions.
+
+name: Generate Snake
+
+on:
+  schedule:
+    - cron: "0 0 */3 * *"
+  workflow_dispatch:  #手动运行workflow
+
+permissions:
+  contents: write
+
+concurrency:
+  group: generate-snake-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+      
+      # 生成蛇，但是没有commit
+      - name: Generate Snake
+        uses: Platane/snk/svg-only@v3 #在marketspace中generate-snake-game-from-github-contribution-grid
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            profile-snake-contrib/github-contribution-grid-snake.svg
+            profile-snake-contrib/github-contribution-grid-snake-dark.svg?palette=github-dark
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      #将生成的蛇commit到github repository
+      - name: Commit and push to GitHub
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git pull --rebase --autostash origin "$TARGET_BRANCH"
+          git add profile-snake-contrib/github-contribution-grid-snake.svg profile-snake-contrib/github-contribution-grid-snake-dark.svg
+
+          if git diff --cached --quiet; then
+            echo "No snake changes to commit."
+            exit 0
+          fi
+
+          git commit -m ":rocket: Update by Snake"
+
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:$TARGET_BRANCH"; then
+              exit 0
+            fi
+
+            echo "Push failed on attempt $attempt. Rebasing onto latest $TARGET_BRANCH and retrying..."
+            git pull --rebase --autostash origin "$TARGET_BRANCH"
+          done
+
+          echo "Failed to push snake updates after 3 attempts."
+          exit 1

@@ -1,0 +1,134 @@
+# 具体配置文档地址 https://github.com/lowlighter/metrics/blob/master/action.yml
+# Visit https://github.com/lowlighter/metrics/blob/master/action.yml for full reference
+
+name: GitHub Metrics
+on:
+  schedule: 
+      - cron: "20 0 */3 * *"
+  workflow_dispatch:  #手动运行workflow
+  
+  #推送就会运行
+  #push: {branches: ["master", "main"]}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-metrics-${{ github.ref }}
+  cancel-in-progress: false
+  
+jobs:
+  github-metrics:
+    runs-on: ubuntu-latest
+    steps:
+      # base metrics（几个基础的metrics）
+      - name: base_metrics
+        uses: lowlighter/metrics@latest
+        with:
+          filename: profile-metrics/base_metrics.svg
+          # Your GitHub token
+          # The following scopes are required:
+          #  - repo
+          #  - public_access (default scope)
+          # The following additional scopes may be required:
+          #  - read:org      (for organization related metrics)
+          #  - read:user     (for user related data)
+          #  - read:packages (for some packages related data)
+          #  - repo          (optional, if you want to include private repositories)
+          token: ${{ secrets.METRICS_TOKEN }}
+          # Options
+          user: ${{ github.repository_owner }}
+          template: classic
+          config_timezone: Asia/Shanghai
+          committer_message: ":rocket: Update by metrics"
+          base: "header, activity, community, repositories"
+          # plugin
+          plugin_gists: yes
+          plugin_lines: yes
+          plugin_lines_history_limit: 1
+          plugin_lines_repositories_limit: 4
+          plugin_lines_sections: base
+          plugin_traffic: yes
+      
+      # plugin metrics（一些丰富功能的metrics插件）
+      - name: plugin_metrics
+        uses: lowlighter/metrics@latest
+        with:
+          filename: profile-metrics/plugin_metrics.svg
+          # Your GitHub token
+          # The following scopes are required:
+          #  - public_access (default scope)
+          #  - public_repo
+          #  - read:project
+          # The following additional scopes may be required:
+          #  - read:org      (for organization related metrics)
+          #  - read:user     (for user related data)
+          #  - read:packages (for some packages related data)
+          #  - repo          (optional, if you want to include private repositories)
+          token: ${{ secrets.METRICS_TOKEN }}
+          user: ${{ github.repository_owner }}
+          template: classic
+          committer_message: ":rocket: Update by metrics"
+          base: ""
+          config_timezone: Asia/Shanghai
+
+          # The projects and achievements plugins still query deprecated
+          # GitHub Projects (classic), and activity/habits can break on
+          # newer GitHub event payloads. Keep the profile image clean by
+          # using the stable plugins below.
+          
+          # 🎟️ Follow-up of issues and pull requests
+          plugin_followup: yes
+          plugin_followup_sections: repositories
+          plugin_introduction: yes
+          plugin_introduction_title: yes
+          
+          # 📅 Isometric commit calendar 日历图
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: full-year                            # Display full year instead of half year
+          
+          # ✨ Stargazers over last weeks
+          plugin_stargazers: yes
+          
+          # 🈷️ Most used languages 常用语言统计
+          plugin_languages: yes
+          plugin_languages_ignored: html, css                               # List of languages to ignore (忽略语言)
+          plugin_languages_skipped: ${{ github.event.repository.name }}      # List of repositories to skip (忽略仓库)
+          plugin_languages_details: bytes-size, percentage                  # Additionally display total bytes size and percentage (显示大小和百分比)
+          plugin_languages_threshold: 2%                                    # Hides all languages less than 2% (隐藏占比较少的语言)
+          plugin_languages_limit: 8                                         # Display up to 8 languages (显示的语言种数)
+          plugin_languages_sections: most-used                              # Display most used and recently used languages stats
+          plugin_languages_indepth: no                                      # Get indepth stats (see documentation before enabling) 
+          plugin_languages_categories: programming                          # Display only languages that match these categories in most-used section
+          plugin_languages_recent_categories: markup, programming           # Display only languages that match these categories in recently-used section
+          plugin_languages_recent_load: 500                                 # Load up to 500 events to compute recently used stats
+          plugin_languages_recent_days: 14                                  # Limit recently used stats to last week (最近使用的语言统计范围)
+          
+          # 🧑‍🤝‍🧑 People plugin 关注与被关注
+          plugin_people: yes
+          plugin_people_types: followers, following                 # Display followers and "thanks" sections
+          plugin_people_limit: 150                                   # Limit to 28 entries per section
+          plugin_people_size: 36                                    # Size in pixels of displayed avatars
+          plugin_people_identicons: no                              # Use avatars (do not use identicons)
+          plugin_people_thanks: octocat                             # Users that will be displayed in "thanks" section
+          plugin_people_sponsors_custom: octocat                    # Users that will be displayed additionally in "sponsors" section
+          plugin_people_shuffle: yes                                # Shuffle for varied output
+          
+          # 🌟 Recently starred repositories
+          plugin_stars: yes
+          plugin_stars_limit: 5   # Limit to 5 entries
+         
+          # 🎭 Comment reactions (评论反馈)
+          plugin_reactions: yes
+          plugin_reactions_limit: 200                               # Compute reactions over last 200 issue comments
+          plugin_reactions_limit_issues: 100                        # Compute reactions over last 100 issues/pull requests opened
+          plugin_reactions_days: 14                                 # Compute reactions on issue comments posted less than 14 days ago
+          plugin_reactions_details: count, percentage               # Display reactions count and percentage
+          plugin_reactions_ignored: bot                             # Ignore "bot" user
+          
+          # 🌇 GitHub Skyline 3D calendar 3D贡献图
+#           plugin_skyline: yes
+#           plugin_skyline_year: 2022                                    # Set to 0 to display current year (统计年份)
+#           plugin_skyline_frames: 30                                 # Use 60 frames (half-loop) (半循环or全循环)
+#           plugin_skyline_quality: 0.5                               # Set image quality (图片质量) 
+#           plugin_skyline_compatibility: no                          # Support additional browsers (⚠️ increases file size and reduce optimization)   

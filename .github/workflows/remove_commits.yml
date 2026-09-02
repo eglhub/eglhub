@@ -1,0 +1,60 @@
+name: Remove Commits
+
+on:
+  schedule:
+    - cron: "37 3 2 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: monthly-history-squash-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  squash-history:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Squash main history to one commit
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+          COMMIT_MESSAGE: "chore: monthly history squash"
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            git fetch origin "$TARGET_BRANCH"
+
+            remote_ref="refs/remotes/origin/$TARGET_BRANCH"
+            remote_commit="$(git rev-parse "$remote_ref")"
+            remote_tree="$(git rev-parse "$remote_commit^{tree}")"
+
+            new_commit="$(
+              printf "%s\n\nSquash repository history to the current %s tree.\n" "$COMMIT_MESSAGE" "$TARGET_BRANCH" |
+              git commit-tree "$remote_tree"
+            )"
+
+            echo "Attempt $attempt: replacing $TARGET_BRANCH history with $new_commit"
+
+            if git push --force-with-lease="refs/heads/$TARGET_BRANCH:$remote_commit" origin "$new_commit:refs/heads/$TARGET_BRANCH"; then
+              echo "History squash complete."
+              exit 0
+            fi
+
+            echo "Push failed on attempt $attempt. Another workflow may have updated $TARGET_BRANCH; retrying..."
+            sleep 10
+          done
+
+          echo "Failed to squash history after 3 attempts."
+          exit 1
